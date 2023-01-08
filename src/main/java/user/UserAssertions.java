@@ -25,4 +25,25 @@ public class UserAssertions {
                 .and()
                 .statusCode(403);
     }
+
+    public void assertSuccessfullyLoginUser(ValidatableResponse response) {
+        response.assertThat()
+                .body("success", equalTo(true))
+                .and()
+                .statusCode(200);
+    }
+
+    public void assertNoAuthorizationUser(ValidatableResponse response) {
+        response.assertThat()
+                .body("success", equalTo(false), "message", equalTo("email or password are incorrect"))
+                .and()
+                .statusCode(401);
+    }
+
+    public  void assertUserSuccessfullyRemoved(ValidatableResponse response) {
+        response.assertThat()
+                .body("success", equalTo(true), "message", equalTo("User successfully removed"))
+                .and()
+                .statusCode(202);
+    }
 }
