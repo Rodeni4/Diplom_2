@@ -46,4 +46,32 @@ public class UserAssertions {
                 .and()
                 .statusCode(202);
     }
+
+    public void assertPatchUserEmailSuccessfully(ValidatableResponse response, String modifiedEmail) {
+        response.assertThat()
+                .body("success", equalTo(true), "user.email", equalTo(modifiedEmail))
+                .and()
+                .statusCode(200);
+    }
+
+    public void assertPatchUserDataNoAuthorization(ValidatableResponse response) {
+        response.assertThat()
+                .body("success", equalTo(false), "message", equalTo("You should be authorised"))
+                .and()
+                .statusCode(401);
+    }
+
+    public void assertPatchUserNameSuccessfully(ValidatableResponse response, String modifiedName) {
+        response.assertThat()
+                .body("success", equalTo(true), "user.name", equalTo(modifiedName))
+                .and()
+                .statusCode(200);
+    }
+
+    public void assertPatchUserEmailAlreadyExists(ValidatableResponse response) {
+        response.assertThat()
+                .body("success", equalTo(false), "message", equalTo("User with such email already exists"))
+                .and()
+                .statusCode(403);
+    }
 }
