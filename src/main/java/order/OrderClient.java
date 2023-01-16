@@ -11,6 +11,7 @@ public class OrderClient {
     public static final String BASE_URL = "https://stellarburgers.nomoreparties.site/";
     private static final String DATA_INGREDIENTS_PATH = "/api/ingredients";
     private static final String DATA_ORDERS_PATH = "/api/orders";
+    private static final String DATA_ORDERS_ALL_PATH = "/api/orders/all";
 
     @Step("Получение данных об ингредиентах")
     public ValidatableResponse getOrderDataIngredients() {
@@ -40,6 +41,23 @@ public class OrderClient {
                 .body(ingredientsList)
                 .when()
                 .post(DATA_ORDERS_PATH)
+                .then().log().all();
+    }
+
+    @Step("Получение заказов неавторизованного пользователя")
+    public ValidatableResponse getAllOrdersUnauthorized() {
+        return given().log().all()
+                .baseUri(BASE_URL)
+                .get(DATA_ORDERS_ALL_PATH)
+                .then().log().all();
+    }
+
+    @Step("Получение заказов авторизованного пользователя")
+    public ValidatableResponse getAllOrdersAuthorized( String token) {
+        return given().log().all()
+                .auth().oauth2(token)
+                .baseUri(BASE_URL)
+                .get(DATA_ORDERS_PATH)
                 .then().log().all();
     }
 }
