@@ -3,6 +3,7 @@ package user;
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,7 +12,7 @@ public class CreatingUserTest {
     private User user;
     private UserClient client;
     private UserAssertions userAssertions;
-    private  User identicalUser;
+    private String accessToken;
 
     @Before
     public void setUp() {
@@ -22,10 +23,11 @@ public class CreatingUserTest {
     @Test
     @DisplayName("Создание пользователя")
     @Description("Пользователя можно создать, возвращает 200 код ответа, возвращает success: true")
-    public void creatingCourier() {
+    public void creatingUser() {
         user = generator.randomUser();
         ValidatableResponse creationResponse = client.createUser(user);
-       userAssertions.assertCreatedSuccessfully(creationResponse);
+        userAssertions.assertCreatedSuccessfully(creationResponse);
+        accessToken = client.getUserAccessToken(user);
     }
 
     @Test
@@ -34,7 +36,7 @@ public class CreatingUserTest {
     public void creatingTwoIdenticalUsers() {
         user = generator.randomUser();
         client.createUser(user);
-        identicalUser = user;
+        User identicalUser = user;
         ValidatableResponse creationResponse = client.createUser(identicalUser);
         userAssertions.assertCreatingUserRecurringLogin(creationResponse);
     }
@@ -64,5 +66,12 @@ public class CreatingUserTest {
         user = generator.randomUserNoFieldName();
         ValidatableResponse creationResponse = client.createUser(user);
         userAssertions.assertCreationUserNoField(creationResponse);
+    }
+
+    @After
+    public void userDelete() {
+        if (accessToken != null) {
+            client.deleteUser(accessToken);
+        }
     }
 }
